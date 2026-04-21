@@ -1,6 +1,7 @@
+/// <reference types="google.maps" />
+
 import { JsonPipe } from '@angular/common';
-import { Component, OnInit, computed, inject, input } from '@angular/core';
-import { GoogleMap, MapPolygon } from '@angular/google-maps';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, computed, effect, inject, input } from '@angular/core';
 
 import { Plot } from '../models/plot.model';
 import { LocalizationService } from '../services/localization.service';
@@ -10,19 +11,25 @@ import { environment } from '../../environments/environment';
 @Component({
   selector: 'app-plot-map',
   standalone: true,
-  imports: [GoogleMap, MapPolygon, JsonPipe],
+  imports: [JsonPipe],
   templateUrl: './plot-map.component.html',
   styleUrl: './plot-map.component.scss'
 })
-export class PlotMapComponent implements OnInit {
+export class PlotMapComponent implements AfterViewInit, OnDestroy {
   readonly plots = input.required<Plot[]>();
   readonly selectedPlotId = input<string | null>(null);
+  @ViewChild('mapContainer') private mapContainer?: ElementRef<HTMLDivElement>;
 
   readonly i18n = inject(LocalizationService);
   private readonly mapsLoader = inject(GoogleMapsLoaderService);
 
   readonly mapReady = this.mapsLoader.loaded;
   readonly apiKeyConfigured = this.mapsLoader.apiKeyConfigured;
+  mapLoadFailed = false;
+
+  private map: google.maps.Map | null = null;
+  private polygons: google.maps.Polygon[] = [];
+  private destroyed = false;
 
   readonly center = computed(() => {
     const selectedPlot = this.selectedPlot();
@@ -45,10 +52,36 @@ export class PlotMapComponent implements OnInit {
     ]
   };
 
-  ngOnInit(): void {
-    if (this.apiKeyConfigured) {
-      this.mapsLoader.load();
+  constructor() {
+    effect(() => {
+      this.selectedPlot();
+      this.plots();
+      this.syncMap();
+    });
+  }
+
+  async ngAfterViewInit(): Promise<void> {
+    if (!this.apiKeyConfigured) {
+      return;
     }
+
+    try {
+      await this.mapsLoader.load();
+      if (this.destroyed) {
+        return;
+      }
+
+      this.initializeMap();
+      this.syncMap();
+    } catch {
+      this.mapLoadFailed = true;
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed = true;
+    this.clearPolygons();
+    this.map = null;
   }
 
   polygonOptions(plot: Plot): google.maps.PolygonOptions {
@@ -60,5 +93,44 @@ export class PlotMapComponent implements OnInit {
       fillColor: selected ? '#f4c152' : '#4f9b78',
       fillOpacity: selected ? 0.35 : 0.2
     };
+  }
+
+  private initializeMap(): void {
+    if (this.map || !this.mapContainer?.nativeElement) {
+      return;
+    }
+
+    this.map = new google.maps.Map(this.mapContainer.nativeElement, {
+      center: this.center(),
+      zoom: 13,
+      ...this.mapOptions
+    });
+  }
+
+  private syncMap(): void {
+    if (!this.map) {
+      return;
+    }
+
+    this.map.setCenter(this.center());
+    this.clearPolygons();
+
+    for (const plot of this.plots()) {
+      const polygon = new google.maps.Polygon({
+        paths: plot.polygon,
+        ...this.polygonOptions(plot),
+        map: this.map
+      });
+
+      this.polygons.push(polygon);
+    }
+  }
+
+  private clearPolygons(): void {
+    for (const polygon of this.polygons) {
+      polygon.setMap(null);
+    }
+
+    this.polygons = [];
   }
 }

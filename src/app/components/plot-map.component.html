@@ -9,12 +9,8 @@
     }
   </div>
 
-  @if (apiKeyConfigured && mapReady()) {
-    <google-map [center]="center()" [zoom]="13" [options]="mapOptions" height="420px" width="100%">
-      @for (plot of plots(); track plot.id) {
-        <map-polygon [paths]="plot.polygon" [options]="polygonOptions(plot)" />
-      }
-    </google-map>
+  @if (apiKeyConfigured && !mapLoadFailed) {
+    <div #mapContainer class="map-canvas"></div>
   } @else {
     <div class="map-fallback">
       <p>{{ i18n.t('map.fallback') }}</p>
