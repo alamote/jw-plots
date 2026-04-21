@@ -56,6 +56,22 @@
               ],
               "outputHashing": "all"
             },
+            "github-pages": {
+              "baseHref": "/jw-plots/",
+              "outputHashing": "all",
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "3kB",
+                  "maximumError": "4kB"
+                }
+              ]
+            },
             "development": {
               "fileReplacements": [
                 {
@@ -75,6 +91,9 @@
           "configurations": {
             "production": {
               "buildTarget": "jw-plots:build:production"
+            },
+            "github-pages": {
+              "buildTarget": "jw-plots:build:github-pages"
             },
             "development": {
               "buildTarget": "jw-plots:build:development"
