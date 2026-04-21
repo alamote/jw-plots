@@ -30,6 +30,7 @@ export class PlotMapComponent implements AfterViewInit, OnDestroy {
   private map: google.maps.Map | null = null;
   private polygons: google.maps.Polygon[] = [];
   private destroyed = false;
+  private initializationAttempts = 0;
 
   readonly center = computed(() => {
     const selectedPlot = this.selectedPlot();
@@ -71,8 +72,7 @@ export class PlotMapComponent implements AfterViewInit, OnDestroy {
         return;
       }
 
-      this.initializeMap();
-      this.syncMap();
+      this.scheduleMapInitialization();
     } catch {
       this.mapLoadFailed = true;
     }
@@ -100,11 +100,20 @@ export class PlotMapComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    this.map = new google.maps.Map(this.mapContainer.nativeElement, {
+    const container = this.mapContainer.nativeElement;
+    if (!container.isConnected || container.clientWidth === 0 || container.clientHeight === 0) {
+      return;
+    }
+
+    this.map = new google.maps.Map(container, {
       center: this.center(),
       zoom: 13,
       ...this.mapOptions
     });
+
+    google.maps.event.trigger(this.map, 'resize');
+    this.map.setCenter(this.center());
+    this.syncMap();
   }
 
   private syncMap(): void {
@@ -132,5 +141,23 @@ export class PlotMapComponent implements AfterViewInit, OnDestroy {
     }
 
     this.polygons = [];
+  }
+
+  private scheduleMapInitialization(): void {
+    if (this.destroyed || this.map) {
+      return;
+    }
+
+    this.initializationAttempts += 1;
+    requestAnimationFrame(() => {
+      if (this.destroyed || this.map) {
+        return;
+      }
+
+      this.initializeMap();
+      if (!this.map && this.initializationAttempts < 10) {
+        this.scheduleMapInitialization();
+      }
+    });
   }
 }
