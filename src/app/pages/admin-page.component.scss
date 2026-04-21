@@ -1,0 +1,138 @@
+.page-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 1.5rem;
+}
+
+.panel {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(31, 42, 31, 0.08);
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 50px rgba(50, 60, 40, 0.08);
+  padding: 1.25rem;
+}
+
+.panel__header h1,
+.panel__header p {
+  margin: 0;
+}
+
+.panel__header p {
+  margin-top: 0.35rem;
+  color: #5e685b;
+}
+
+.plot-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+  margin: 1.25rem 0 1.5rem;
+}
+
+.plot-form label {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.plot-form label.wide,
+.submit {
+  grid-column: 1 / -1;
+}
+
+.plot-form span,
+.plot-form small {
+  color: #4a5949;
+}
+
+.plot-form input,
+.plot-form select,
+.plot-form textarea {
+  border: 1px solid rgba(31, 42, 31, 0.12);
+  border-radius: 0.9rem;
+  padding: 0.9rem 1rem;
+  background: #f9f6ee;
+  font: inherit;
+}
+
+.submit,
+.row-actions button,
+.select-link {
+  cursor: pointer;
+}
+
+.submit {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.9rem 1.2rem;
+  width: fit-content;
+  background: #1f2a1f;
+  color: #f8f6ef;
+}
+
+.table {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: #f9f6ee;
+}
+
+.row span {
+  color: #5e685b;
+  display: block;
+}
+
+.status {
+  text-transform: capitalize;
+  padding: 0.35rem 0.6rem;
+  background: rgba(31, 42, 31, 0.08);
+  border-radius: 999px;
+}
+
+.row-actions {
+  grid-column: 2 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.row-actions button,
+.select-link {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.6rem 0.8rem;
+  background: rgba(31, 42, 31, 0.08);
+  color: #1f2a1f;
+}
+
+.select-link {
+  justify-self: start;
+  background: transparent;
+  color: #1f6a4b;
+  padding: 0;
+  font-weight: 700;
+}
+
+@media (max-width: 1080px) {
+  .page-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .plot-form,
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  .row-actions {
+    grid-column: auto;
+  }
+}

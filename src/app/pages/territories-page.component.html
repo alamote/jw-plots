@@ -1,0 +1,47 @@
+<section class="page-grid">
+  <div class="panel">
+    <div class="panel__header">
+      <h1>{{ i18n.t('territories.title') }}</h1>
+      <p>{{ i18n.t('territories.subtitle') }}</p>
+    </div>
+
+    <div class="plot-section">
+      <h2>{{ i18n.t('territories.availableTitle') }}</h2>
+      <div class="cards">
+        @for (plot of store.availablePlots(); track plot.id) {
+          <article class="plot-card">
+            <button type="button" class="select-link" (click)="store.selectPlot(plot.id)">{{ plot.territoryNumber }}</button>
+            <strong>{{ plot.name }}</strong>
+            <span>{{ plot.city }} · {{ plot.area }}</span>
+            <small>{{ plot.notes }}</small>
+            <button type="button" class="action" (click)="store.bookPlot(plot.id)">{{ i18n.t('territories.book') }}</button>
+          </article>
+        } @empty {
+          <p class="empty">{{ i18n.t('territories.emptyAvailable') }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="plot-section">
+      <h2>{{ i18n.t('territories.myTitle') }}</h2>
+      <div class="cards">
+        @for (plot of store.myPlots(); track plot.id) {
+          <article class="plot-card">
+            <button type="button" class="select-link" (click)="store.selectPlot(plot.id)">{{ plot.territoryNumber }}</button>
+            <strong>{{ plot.name }}</strong>
+            <span>{{ i18n.t('territories.status') }}: {{ i18n.status(plot.status) }}</span>
+            <small>{{ i18n.t('territories.lastUpdated') }} {{ i18n.formatDate(plot.updatedAt) }}</small>
+            <div class="actions">
+              <button type="button" class="action" (click)="store.markProcessed(plot.id)">{{ i18n.t('territories.markProcessed') }}</button>
+              <button type="button" class="action ghost" (click)="store.returnToPool(plot.id)">{{ i18n.t('territories.returnToPool') }}</button>
+            </div>
+          </article>
+        } @empty {
+          <p class="empty">{{ i18n.t('territories.emptyMine') }}</p>
+        }
+      </div>
+    </div>
+  </div>
+
+  <app-plot-map [plots]="store.plots()" [selectedPlotId]="store.selectedPlotId()" />
+</section>

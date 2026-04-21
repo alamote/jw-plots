@@ -1,0 +1,47 @@
+<div class="shell">
+  <header class="topbar">
+    <a class="brand" routerLink="/">
+      <span class="brand-mark">JP</span>
+      <span>
+        <strong>JW Plots</strong>
+        <small>{{ i18n.t('app.brandSubtitle') }}</small>
+      </span>
+    </a>
+
+    <div class="topbar-actions">
+      <nav class="nav">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ i18n.t('nav.overview') }}</a>
+        <a routerLink="/territories" routerLinkActive="active">{{ i18n.t('nav.territories') }}</a>
+        <a routerLink="/admin" routerLinkActive="active">{{ i18n.t('nav.admin') }}</a>
+      </nav>
+
+      <div class="lang-switcher" [attr.aria-label]="i18n.t('lang.label')">
+        <div class="lang-switcher__control" role="tablist" [attr.aria-label]="i18n.t('lang.label')">
+          <span class="lang-switcher__thumb" [class.is-ru]="i18n.language() === 'ru'"></span>
+          <button
+            type="button"
+            class="lang-switcher__option"
+            [class.is-active]="i18n.language() === 'uk'"
+            [attr.aria-selected]="i18n.language() === 'uk'"
+            (click)="setLanguage('uk')"
+          >
+            UA
+          </button>
+          <button
+            type="button"
+            class="lang-switcher__option"
+            [class.is-active]="i18n.language() === 'ru'"
+            [attr.aria-selected]="i18n.language() === 'ru'"
+            (click)="setLanguage('ru')"
+          >
+            RU
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>

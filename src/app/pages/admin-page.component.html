@@ -1,0 +1,66 @@
+<section class="page-grid">
+  <div class="panel">
+    <div class="panel__header">
+      <h1>{{ i18n.t('admin.title') }}</h1>
+      <p>{{ i18n.t('admin.subtitle') }}</p>
+    </div>
+
+    <form class="plot-form" [formGroup]="plotForm" (ngSubmit)="addPlot()">
+      <label>
+        <span>{{ i18n.t('admin.territoryNumber') }}</span>
+        <input type="text" formControlName="territoryNumber" placeholder="T-205" />
+      </label>
+      <label>
+        <span>{{ i18n.t('admin.name') }}</span>
+        <input type="text" formControlName="name" [placeholder]="i18n.t('admin.newResidentialCluster')" />
+      </label>
+      <label>
+        <span>{{ i18n.t('admin.area') }}</span>
+        <input type="text" formControlName="area" [placeholder]="i18n.t('admin.northDistrict')" />
+      </label>
+      <label>
+        <span>{{ i18n.t('admin.city') }}</span>
+        <input type="text" formControlName="city" />
+      </label>
+      <label>
+        <span>{{ i18n.t('admin.priority') }}</span>
+        <select formControlName="priority">
+          <option value="normal">{{ i18n.t('priority.normal') }}</option>
+          <option value="high">{{ i18n.t('priority.high') }}</option>
+          <option value="urgent">{{ i18n.t('priority.urgent') }}</option>
+        </select>
+      </label>
+      <label class="wide">
+        <span>{{ i18n.t('admin.notes') }}</span>
+        <textarea rows="3" formControlName="notes"></textarea>
+      </label>
+      <label class="wide">
+        <span>{{ i18n.t('admin.polygonJson') }}</span>
+        <textarea rows="8" formControlName="polygonText"></textarea>
+        <small>{{ i18n.t('admin.polygonHint') }} <code>{{ '{ lat, lng }' }}</code></small>
+      </label>
+
+      <button type="submit" class="submit">{{ i18n.t('admin.addPlot') }}</button>
+    </form>
+
+    <div class="table">
+      @for (plot of store.plots(); track plot.id) {
+        <article class="row">
+          <button type="button" class="select-link" (click)="store.selectPlot(plot.id)">{{ plot.territoryNumber }}</button>
+          <div>
+            <strong>{{ plot.name }}</strong>
+            <span>{{ plot.city }} · {{ plot.area }}</span>
+          </div>
+          <span class="status">{{ i18n.status(plot.status) }}</span>
+          <div class="row-actions">
+            <button type="button" (click)="setStatus(plot.id, 'available')">{{ i18n.t('admin.action.available') }}</button>
+            <button type="button" (click)="setStatus(plot.id, 'booked')">{{ i18n.t('admin.action.booked') }}</button>
+            <button type="button" (click)="setStatus(plot.id, 'processed')">{{ i18n.t('admin.action.processed') }}</button>
+          </div>
+        </article>
+      }
+    </div>
+  </div>
+
+  <app-plot-map [plots]="store.plots()" [selectedPlotId]="store.selectedPlotId()" />
+</section>

@@ -1,0 +1,53 @@
+<section class="hero">
+  <div class="hero__copy">
+    <p class="eyebrow">{{ i18n.t('overview.eyebrow') }}</p>
+    <h1>{{ i18n.t('overview.title') }}</h1>
+    <p class="lede">{{ i18n.t('overview.lede') }}</p>
+
+    <div class="hero__actions">
+      <a routerLink="/territories">{{ i18n.t('overview.openPool') }}</a>
+      <a class="ghost" routerLink="/admin">{{ i18n.t('overview.openAdmin') }}</a>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <article>
+      <strong>{{ store.stats().available }}</strong>
+      <span>{{ i18n.t('overview.availableNow') }}</span>
+    </article>
+    <article>
+      <strong>{{ store.stats().booked }}</strong>
+      <span>{{ i18n.t('overview.bookedByUsers') }}</span>
+    </article>
+    <article>
+      <strong>{{ store.stats().processed }}</strong>
+      <span>{{ i18n.t('overview.processed') }}</span>
+    </article>
+    <article>
+      <strong>{{ store.stats().total }}</strong>
+      <span>{{ i18n.t('overview.totalPlots') }}</span>
+    </article>
+  </div>
+</section>
+
+<section class="overview-grid">
+  <app-plot-map [plots]="store.plots()" [selectedPlotId]="store.selectedPlotId()" />
+
+  <div class="panel">
+    <div class="panel__header">
+      <h2>{{ i18n.t('overview.priorityTerritories') }}</h2>
+      <p>{{ i18n.t('overview.priorityDescription') }}</p>
+    </div>
+
+    <div class="plot-list">
+      @for (plot of highlightPlots(); track plot.id) {
+        <button type="button" class="plot-card" (click)="store.selectPlot(plot.id)">
+          <span class="plot-card__meta">{{ plot.territoryNumber }} · {{ i18n.priority(plot.priority) }}</span>
+          <strong>{{ plot.name }}</strong>
+          <span>{{ plot.city }} · {{ plot.area }}</span>
+          <small>{{ plot.notes }}</small>
+        </button>
+      }
+    </div>
+  </div>
+</section>

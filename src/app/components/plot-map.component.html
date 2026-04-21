@@ -1,0 +1,31 @@
+<section class="map-card">
+  <div class="map-card__header">
+    <div>
+      <h3>{{ i18n.t('map.title') }}</h3>
+      <p>{{ i18n.t('map.description') }}</p>
+    </div>
+    @if (selectedPlot(); as plot) {
+      <span class="badge">{{ plot.territoryNumber }}</span>
+    }
+  </div>
+
+  @if (apiKeyConfigured && mapReady()) {
+    <google-map [center]="center()" [zoom]="13" [options]="mapOptions" height="420px" width="100%">
+      @for (plot of plots(); track plot.id) {
+        <map-polygon [paths]="plot.polygon" [options]="polygonOptions(plot)" />
+      }
+    </google-map>
+  } @else {
+    <div class="map-fallback">
+      <p>{{ i18n.t('map.fallback') }}</p>
+
+      @if (selectedPlot(); as plot) {
+        <div class="map-fallback__details">
+          <strong>{{ plot.name }}</strong>
+          <span>{{ plot.city }} · {{ plot.area }}</span>
+          <code>{{ plot.polygon | json }}</code>
+        </div>
+      }
+    </div>
+  }
+</section>
