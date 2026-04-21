@@ -31,6 +31,27 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Write production environment
+        env:
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          DEFAULT_CITY: ${{ vars.DEFAULT_CITY || 'Kropyvnytskyi' }}
+          DEFAULT_MAP_LAT: ${{ vars.DEFAULT_MAP_LAT || '48.5079' }}
+          DEFAULT_MAP_LNG: ${{ vars.DEFAULT_MAP_LNG || '32.2623' }}
+          CURRENT_USER: ${{ vars.CURRENT_USER || 'Field User' }}
+        run: |
+          cat > src/environments/environment.ts <<EOF
+          export const environment = {
+            production: true,
+            googleMapsApiKey: '${GOOGLE_MAPS_API_KEY}',
+            defaultCity: '${DEFAULT_CITY}',
+            defaultMapCenter: {
+              lat: ${DEFAULT_MAP_LAT},
+              lng: ${DEFAULT_MAP_LNG}
+            },
+            currentUser: '${CURRENT_USER}'
+          } as const;
+          EOF
+
       - name: Build app
         run: npm run build:gh-pages
 
